@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THBT Mezunlar Uygulaması</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--red:#C0392B;--green:#27AE60;--orange:#E67E22;--blue:#7986CB;--dark:#1C1C1C;--cream:#FBF8F3;--border:#EDE8DF;--text:#2C2C2C;--muted:#888;--sidebar:#1C1C1C;--shadow:0 2px 12px rgba(0,0,0,.08);--tag-bg:#F5EFE6;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);display:flex;height:100vh;overflow:hidden;}
+  .sidebar{width:230px;min-width:230px;background:var(--sidebar);display:flex;flex-direction:column;}
+  .sb-logo{padding:20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;}
+  .sb-circle{width:44px;height:44px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sb-name{font-family:'Playfair Display',serif;color:white;font-size:15px;font-weight:700;}
+  .sb-sub{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.5px;}
+  .sb-nav{flex:1;padding:12px 0;overflow-y:auto;}
+  .nav-sec{padding:8px 16px 4px;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.6);cursor:pointer;font-size:13.5px;font-weight:500;transition:all .2s;border-left:3px solid transparent;}
+  .nav-item:hover{color:white;background:rgba(255,255,255,.05);}
+  .nav-item.active{color:white;background:rgba(192,57,43,.2);border-left-color:var(--red);}
+  .nav-item .ic{font-size:16px;width:20px;text-align:center;}
+  .nbadge{margin-left:auto;background:var(--red);color:white;border-radius:10px;font-size:10px;padding:1px 7px;}
+  .sb-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;}
+  .av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;flex-shrink:0;}
+  .sb-uname{color:white;font-size:13px;font-weight:600;}
+  .sb-urole{font-size:10px;color:rgba(255,255,255,.4);}
+  .rtoggle{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.6);font-size:10px;padding:3px 8px;border-radius:10px;cursor:pointer;font-family:'Nunito',sans-serif;}
+  .rtoggle:hover{background:rgba(255,255,255,.2);color:white;}
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .topbar{background:white;padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;}
+  .page-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;}
+  .content{flex:1;overflow-y:auto;padding:24px 28px;}
+  .btn{border:none;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Nunito',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all .2s;}
+  .btn-p{background:var(--red);color:white;}.btn-p:hover{background:#A93226;}
+  .btn-s{background:white;color:var(--text);border:1.5px solid var(--border);}.btn-s:hover{background:var(--cream);}
+  .btn-sm{padding:5px 12px;border-radius:12px;font-size:11px;}
+  .btn-g{background:#EAFAF1;color:var(--green);}.btn-g:hover,.btn-g.on{background:var(--green);color:white;}
+  .card{background:white;border-radius:14px;padding:20px;box-shadow:var(--shadow);border:1px solid var(--border);}
+  .card-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+  .see-all{font-family:'Nunito',sans-serif;font-size:12px;color:var(--red);font-weight:600;cursor:pointer;}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .mb{margin-bottom:18px;}
+  .scard{background:white;border-radius:14px;padding:18px 20px;border:1px solid var(--border);display:flex;align-items:center;gap:14px;}
+  .sicon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+  .sval{font-size:24px;font-weight:700;font-family:'Playfair Display',serif;}
+  .slbl{font-size:12px;color:var(--muted);}
+  .ecard{background:white;border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;transition:transform .15s,box-shadow .15s;}
+  .ecard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.12);}
+  .ehead{height:100px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;}
+  .etag{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.5);color:white;font-size:10px;padding:3px 10px;border-radius:10px;font-weight:600;}
+  .ersvp{position:absolute;top:10px;right:10px;font-size:10px;padding:3px 10px;border-radius:10px;font-weight:600;}
+  .ersvp-o{background:rgba(39,174,96,.9);color:white;}.ersvp-c{background:rgba(127,127,127,.8);color:white;}
+  .ebody{padding:14px;}
+  .ename{font-weight:700;font-size:14px;margin-bottom:4px;}
+  .emeta{font-size:12px;color:var(--muted);}
+  .efooter{padding:10px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .pips{display:flex;}
+  .pip{width:22px;height:22px;border-radius:50%;border:2px solid white;margin-left:-6px;display:flex;align-items:center;justify-content:center;font-size:9px;color:white;font-weight:700;}
+  .pip:first-child{margin-left:0;}
+  .btabs{display:flex;gap:4px;margin-bottom:20px;background:var(--tag-bg);border-radius:12px;padding:4px;}
+  .btab{flex:1;text-align:center;padding:8px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all .2s;}
+  .btab.active{background:white;color:var(--dark);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+  .bmem{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);}
+  .bmem:last-child{border-bottom:none;}
+  .mav{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;flex-shrink:0;}
+  .tbl{width:100%;border-collapse:separate;border-spacing:0;}
+  .tbl th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;text-align:left;padding:8px 12px;background:var(--cream);}
+  .tbl th:first-child{border-radius:8px 0 0 8px;}.tbl th:last-child{border-radius:0 8px 8px 0;}
+  .tbl td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:13.5px;vertical-align:middle;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .pill{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;}
+  .p-g{background:#EAFAF1;color:var(--green);}.p-r{background:#FDEDEC;color:var(--red);}
+  .p-y{background:#FEF9E7;color:#D4AC0D;}.p-b{background:#EBF5FB;color:#1A5276;}
+  .abtn{background:none;border:1px solid var(--border);padding:4px 10px;border-radius:8px;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:600;transition:all .15s;}
+  .abtn:hover{border-color:var(--red);color:var(--red);}
+  .abtn.ok{border-color:var(--green);color:var(--green);}.abtn.ok:hover{background:var(--green);color:white;}
+  .mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .mitem{border-radius:12px;aspect-ratio:1;background:var(--tag-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s;border:1px solid var(--border);font-size:28px;gap:5px;}
+  .mitem:hover{transform:scale(1.03);}
+  .mlbl{font-size:10px;color:var(--muted);font-weight:600;text-align:center;padding:0 4px;}
+  .upload-area{border:2px dashed var(--border);border-radius:14px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;}
+  .upload-area:hover{border-color:var(--red);background:#FEF9F9;}
+  .aitem{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+  .aitem:last-child{border-bottom:none;}
+  .aicon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+  .wa-btn{display:inline-flex;align-items:center;gap:5px;background:#25D366;color:white;border:none;padding:5px 12px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:8px;}
+  .moverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;}
+  .mbox{background:white;border-radius:18px;width:520px;max-height:85vh;overflow-y:auto;padding:28px;position:relative;}
+  .mclose{position:absolute;top:20px;right:20px;background:var(--cream);border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;}
+  .mtitle{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:20px;}
+  .fg{margin-bottom:14px;}
+  .fl{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;display:block;letter-spacing:.5px;text-transform:uppercase;}
+  .fi,.fs,.ft{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);outline:none;transition:border-color .2s;}
+  .fi:focus,.fs:focus,.ft:focus{border-color:var(--red);background:white;}
+  .ft{height:80px;resize:none;}
+  .fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .fc{display:flex;align-items:center;gap:8px;margin-top:6px;}
+  .fc input{width:16px;height:16px;accent-color:var(--red);}
+  .sbtn{background:var(--red);color:white;border:none;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:'Nunito',sans-serif;transition:background .2s;margin-top:12px;}
+  .sbtn:hover{background:#A93226;}
+  .ysel{border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;font-size:13px;font-family:'Nunito',sans-serif;background:white;cursor:pointer;outline:none;}
+  .ysel:focus{border-color:var(--red);}
+  .tag{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;}
+  .t-r{background:#FDEDEC;color:#C0392B;}.t-g{background:#EAFAF1;color:#1E8449;}
+  .t-b{background:#EAF5FB;color:#1A5276;}.t-o{background:#FEF5E7;color:#D35400;}
+  /* ── PROFILE ── */
+  .prof-layout{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start;}
+  .prof-card{background:white;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow);}
+  .prof-head{padding:28px 20px 18px;text-align:center;border-bottom:1px solid var(--border);}
+  .prof-av{width:80px;height:80px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:white;margin:0 auto 14px;}
+  .prof-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:3px;}
+  .prof-email{font-size:12px;color:var(--muted);margin-bottom:8px;}
+  .prof-body{padding:16px 20px;}
+  .prof-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px;}
+  .prof-row:last-child{border-bottom:none;}
+  .prof-row .lk{color:var(--muted);white-space:nowrap;}
+  .prof-row .lv{font-weight:700;text-align:right;max-width:60%;}
+  .prof-tagblock{margin-top:12px;}
+  .prof-tagblock .ptlbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px;}
+  .prof-tags{display:flex;flex-wrap:wrap;gap:4px;}
+  /* FORM SECTIONS */
+  .pf-sections{display:flex;flex-direction:column;gap:14px;}
+  .pf-section{background:white;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;}
+  .pf-hdr{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;transition:background .15s;}
+  .pf-hdr:hover{background:#FAFAFA;}
+  .pf-hdr-icon{font-size:18px;}
+  .pf-hdr-title{font-weight:700;font-size:14px;flex:1;}
+  .pf-chev{color:var(--muted);font-size:12px;transition:transform .2s;}
+  .pf-body{padding:20px;}
+  .pf-body.closed{display:none;}
+  /* TAG SELECTOR */
+  .tag-pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  .topt{border:1.5px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;background:white;color:var(--muted);font-family:'Nunito',sans-serif;white-space:nowrap;}
+  .topt:hover{border-color:var(--red);color:var(--red);background:#FEF9F9;}
+  .topt.sel{border-color:var(--red);background:var(--red);color:white;}
+  .topt.sel.gc{border-color:var(--green);background:var(--green);}
+  .topt.sel.bc{border-color:var(--blue);background:var(--blue);}
+  .topt.sel.oc{border-color:var(--orange);background:var(--orange);}
+  /* TOGGLE */
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;}
+  .toggle-left .tlbl{font-size:13.5px;font-weight:700;}
+  .toggle-left .tsub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .tswitch{position:relative;width:44px;height:24px;flex-shrink:0;}
+  .tswitch input{opacity:0;width:0;height:0;}
+  .tslider{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.3s;}
+  .tslider::before{content:'';position:absolute;width:18px;height:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;}
+  .tswitch input:checked+.tslider{background:var(--green);}
+  .tswitch input:checked+.tslider::before{transform:translateX(20px);}
+  /* CHECKBOX CARDS */
+  .cbgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+  .cbcard{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .15s;background:white;}
+  .cbcard:hover{border-color:var(--red);}
+  .cbcard.on{border-color:var(--red);background:#FEF9F9;}
+  .cbcard.on .cbdot{background:var(--red);}
+  .cbdot{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);transition:all .2s;flex-shrink:0;}
+  .cbcard.on .cbdot{border-color:var(--red);background:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.15);}
+  .cbcard label{font-size:13px;font-weight:600;cursor:pointer;flex:1;}
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--dark);color:white;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.2);animation:su .3s ease;}
+  @keyframes su{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-circle">
+      <svg width="36" height="36" viewBox="0 0 100 100">
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#E63946" transform="rotate(0 50 50)"/>
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#4CAF50" transform="rotate(30 50 50)"/>
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#FF9800" transform="rotate(60 50 50)"/>
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#7986CB" transform="rotate(90 50 50)"/>
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#E63946" transform="rotate(120 50 50)"/>
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#4CAF50" transform="rotate(150 50 50)"/>
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#FF9800" transform="rotate(180 50 50)"/>
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#7986CB" transform="rotate(210 50 50)"/>
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#E63946" transform="rotate(240 50 50)"/>
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#4CAF50" transform="rotate(270 50 50)"/>
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#FF9800" transform="rotate(300 50 50)"/>
+        <ellipse cx="50" cy="10" rx="5" ry="8" fill="#7986CB" transform="rotate(330 50 50)"/>
+        <text x="50" y="63" text-anchor="middle" font-size="48" font-family="serif" font-style="italic" fill="#1C1C1C">S</text>
+      </svg>
+    </div>
+    <div><div class="sb-name">THBT</div><div class="sb-sub">ODTÜ · Est. 1961</div></div>
+  </div>
+  <div class="sb-nav">
+    <div class="nav-sec">Genel</div>
+    <div class="nav-item active" onclick="setPage('dashboard')"><span class="ic">🏠</span>Ana Sayfa</div>
+    <div class="nav-item" onclick="setPage('events')"><span class="ic">🎭</span>Etkinlikler<span class="nbadge">5</span></div>
+    <div class="nav-item" onclick="setPage('announcements')"><span class="ic">📢</span>Duyurular</div>
+    <div class="nav-sec">Topluluk</div>
+    <div class="nav-item" onclick="setPage('board')"><span class="ic">👑</span>Yönetim Kurulu</div>
+    <div class="nav-item" onclick="setPage('members')"><span class="ic">👥</span>Üyeler<span class="nbadge" id="pendingBadge">2</span></div>
+    <div class="nav-sec">İçerik</div>
+    <div class="nav-item" onclick="setPage('media')"><span class="ic">🖼️</span>Medya & Belgeler</div>
+    <div class="nav-item" onclick="setPage('profile')"><span class="ic">⚙️</span>Profilim</div>
+  </div>
+  <div class="sb-user">
+    <div class="av" id="sbAv" style="width:34px;height:34px;font-size:12px;background:var(--red)">AY</div>
+    <div><div class="sb-uname">Ahmet Yılmaz</div><div class="sb-urole" id="roleLabel">Yönetici</div></div>
+    <button class="rtoggle" onclick="toggleRole()">Değiştir</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Ana Sayfa</div>
+    <div id="topbarActions" style="display:flex;gap:10px;align-items:center"></div>
+  </div>
+  <div class="content" id="mainContent"></div>
+</div>
+
+<div class="moverlay" id="moverlay" style="display:none" onclick="maybeClose(event)">
+  <div class="mbox" id="mbox">
+    <button class="mclose" onclick="closeModal()">✕</button>
+    <div id="mcontent"></div>
+  </div>
+</div>
+
+<script>
+let isAdmin=true,currentPage='dashboard';
+
+const UP={
+  name:'Ahmet Yılmaz',email:'ahmet@metu.edu.tr',phone:'+90 555 123 4567',
+  city:'Ankara',country:'Türkiye',
+  thbtEntry:'2015-09',odtuGrad:'2019-06',
+  memberType:'Fosil',weeklyActive:true,
+  halkOyunlari:['Trabzon','Burdur','Edirne'],
+  muzikalAktiviteler:['Koro','Enstrüman Eğitmeni'],
+  enstru:['Bağlama','Kaval'],
+  aktifBirimler:['Dergilik','Yöre Araştırmaları'],
+};
+
+const HALK=['Trabzon','Gaziantep','Burdur','Edirne','Ege','Konya','Kars','Silifke','Ankara','Elazığ','Erzurum','Harput','Kastamonu','Malatya','Teke','Urfa','Van','Zeybek'];
+const MUZIK=['Koro','Solo','Enstrüman Eğitmeni'];
+const ENSTR=['Bağlama','Kaval','Davul','Kemençe','Keman','Ney','Zurna','Tulum','Gayda','Dümbelek','Def','Ud','Cura','Kopuz','Mey','Balaban'];
+const BIRIM=['Giysilik','Dergilik','Belgelik','Yöre Araştırmaları'];
+
+const events=[
+  {id:1,name:'Bahar Konseri 2025',type:'Konser',emoji:'🎵',date:'15 Mayıs 2025',time:'19:00',loc:'ODTÜ Kültür Merkezi',rsvp:true,going:false,pips:['AY','BK','CL','DM'],colors:['#C0392B','#E67E22','#27AE60','#7986CB']},
+  {id:2,name:'Yıllık İftar Yemeği',type:'Yemek',emoji:'🍽️',date:'28 Mart 2025',time:'19:30',loc:'ODTÜ Yemekhanesi',rsvp:true,going:true,pips:['EF','GH','IJ'],colors:['#27AE60','#3498DB','#E67E22']},
+  {id:3,name:'Halk Dansları Gösterisi',type:'Gösteri',emoji:'💃',date:'22 Nisan 2025',time:'18:00',loc:'ODTÜ Açık Hava',rsvp:false,going:false,pips:['KL','MN'],colors:['#E67E22','#9B59B6']},
+  {id:4,name:'Sabah Kahvaltısı',type:'Kahvaltı',emoji:'☕',date:'10 Haziran 2025',time:'10:00',loc:'THBT Odası',rsvp:true,going:false,pips:['OP','QR'],colors:['#F39C12','#27AE60']},
+  {id:5,name:'Tiyatro: Hamlet',type:'Tiyatro',emoji:'🎭',date:'5 Temmuz 2025',time:'20:00',loc:'Ankara Devlet Tiyatrosu',rsvp:true,going:false,pips:['UV'],colors:['#2C3E50']},
+];
+const boards={
+  fosil:{years:['2024-2025','2023-2024','2022-2023','2021-2022','2020-2021'],data:{
+    '2024-2025':[{n:'Murat Demir',r:'Başkan',i:'MD',c:'#C0392B'},{n:'Selin Akın',r:'Başkan Yrd.',i:'SA',c:'#27AE60'},{n:'Barış Kaya',r:'Sekreter',i:'BK',c:'#E67E22'},{n:'Ayşe Çelik',r:'Sayman',i:'AÇ',c:'#7986CB'},{n:'Ozan Yıldız',r:'Üye',i:'OY',c:'#8E44AD'}],
+    '2023-2024':[{n:'Kemal Arslan',r:'Başkan',i:'KA',c:'#C0392B'},{n:'Zeynep Öz',r:'Başkan Yrd.',i:'ZÖ',c:'#27AE60'},{n:'Cem Uzun',r:'Sekreter',i:'CU',c:'#E67E22'},{n:'Nisa Koç',r:'Sayman',i:'NK',c:'#7986CB'}],
+    '2022-2023':[{n:'Hakan Şen',r:'Başkan',i:'HŞ',c:'#C0392B'},{n:'Lale Arslan',r:'Başkan Yrd.',i:'LA',c:'#27AE60'},{n:'Mert Doğan',r:'Sekreter',i:'MD',c:'#E67E22'}],
+  }},
+  caylak:{years:['2024-2025','2023-2024','2022-2023'],data:{
+    '2024-2025':[{n:'Elif Şahin',r:'Başkan',i:'EŞ',c:'#C0392B'},{n:'Tolga Aydın',r:'Başkan Yrd.',i:'TA',c:'#27AE60'},{n:'Merve Duman',r:'Sekreter',i:'MD',c:'#E67E22'},{n:'Kaan Polat',r:'Sayman',i:'KP',c:'#7986CB'},{n:'Büşra Işık',r:'Üye',i:'Bİ',c:'#8E44AD'},{n:'Emre Güler',r:'Üye',i:'EG',c:'#16A085'}],
+    '2023-2024':[{n:'Furkan Çam',r:'Başkan',i:'FÇ',c:'#C0392B'},{n:'Dilek Yıl',r:'Başkan Yrd.',i:'DY',c:'#27AE60'},{n:'Sercan Özer',r:'Sekreter',i:'SÖ',c:'#E67E22'}],
+  }}
+};
+let memberList=[
+  {id:1,name:'Ahmet Yılmaz',init:'AY',role:'admin',status:'active',email:'ahmet@metu.edu.tr',year:'2019',type:'Fosil',col:'#C0392B',oyunlar:['Trabzon','Burdur','Edirne'],enstru:['Bağlama','Kaval'],birimler:['Dergilik'],weekly:true,city:'Ankara'},
+  {id:2,name:'Berna Koç',init:'BK',role:'user',status:'active',email:'berna@metu.edu.tr',year:'2021',type:'Fosil',col:'#27AE60',oyunlar:['Gaziantep','Konya'],enstru:['Davul','Kemençe'],birimler:['Giysilik','Belgelik'],weekly:true,city:'İstanbul'},
+  {id:3,name:'Can Lale',init:'CL',role:'user',status:'active',email:'can@metu.edu.tr',year:'2023',type:'Çaylak',col:'#E67E22',oyunlar:['Ege','Zeybek'],enstru:['Bağlama'],birimler:['Yöre Araştırmaları'],weekly:false,city:'Ankara'},
+  {id:4,name:'Deniz Mert',init:'DM',role:'user',status:'pending',email:'deniz@metu.edu.tr',year:'2024',type:'Çaylak',col:'#7986CB',oyunlar:[],enstru:[],birimler:[],weekly:false,city:'İzmir'},
+  {id:5,name:'Emre Fidan',init:'EF',role:'user',status:'pending',email:'emre@metu.edu.tr',year:'2024',type:'Çaylak',col:'#8E44AD',oyunlar:[],enstru:[],birimler:[],weekly:false,city:'Bursa'},
+  {id:6,name:'Gizem Han',init:'GH',role:'user',status:'active',email:'gizem@metu.edu.tr',year:'2022',type:'Fosil',col:'#16A085',oyunlar:['Kars','Harput','Erzurum'],enstru:['Kemençe','Tulum'],birimler:['Dergilik','Giysilik'],weekly:true,city:'Ankara'},
+];
+const announcements=[
+  {id:1,title:'Bahar Konseri Prova Takvimi',text:'Konser öncesi prova takvimi paylaşılmıştır. Tüm üyelerin katılımı beklenmektedir.',date:'2 Mayıs 2025',icon:'🎵',bg:'#FDEDEC',wa:true},
+  {id:2,title:'Yeni Üye Kayıtları Başladı',text:'2025-2026 dönemi için yeni üye başvuruları başlamıştır. Tanıdıklarınızı davet edebilirsiniz.',date:'28 Nisan 2025',icon:'🌱',bg:'#EAFAF1',wa:false},
+  {id:3,title:'Yönetim Kurulu Seçimleri',text:'Fosil ve Çaylak yönetim kurulu seçimleri 20 Mayıs\'ta gerçekleşecektir. Son başvuru tarihi 15 Mayıs.',date:'25 Nisan 2025',icon:'🗳️',bg:'#FEF9E7',wa:true},
+];
+
+/* NAV */
+function toggleRole(){isAdmin=!isAdmin;document.getElementById('roleLabel').textContent=isAdmin?'Yönetici':'Üye';document.getElementById('sbAv').style.background=isAdmin?'var(--red)':'var(--blue)';document.getElementById('pendingBadge').style.display=isAdmin?'':'none';setPage(currentPage);}
+function setPage(page){currentPage=page;document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));const idx={dashboard:0,events:1,announcements:2,board:3,members:4,media:5,profile:6};document.querySelectorAll('.nav-item')[idx[page]]?.classList.add('active');const titles={dashboard:'Ana Sayfa',events:'Etkinlikler',announcements:'Duyurular',board:'Yönetim Kurulu',members:'Üyeler',media:'Medya & Belgeler',profile:'Profilim'};document.getElementById('pageTitle').textContent=titles[page]||page;({dashboard:renderDashboard,events:renderEvents,announcements:renderAnn,board:renderBoard,members:renderMembers,media:renderMedia,profile:renderProfile}[page]||(()=>{}))();}
+function topActs(h){document.getElementById('topbarActions').innerHTML=h;}
+
+/* DASHBOARD */
+function renderDashboard(){topActs(isAdmin?`<button class="btn btn-p" onclick="openCreateEvent()">＋ Etkinlik Oluştur</button>`:'');const active=memberList.filter(m=>m.status==='active').length,pending=memberList.filter(m=>m.status==='pending').length;document.getElementById('mainContent').innerHTML=`<div class="g4 mb"><div class="scard"><div class="sicon" style="background:#FDEDEC">🎭</div><div><div class="sval">${events.length}</div><div class="slbl">Etkinlik</div></div></div><div class="scard"><div class="sicon" style="background:#EAFAF1">👥</div><div><div class="sval">${active}</div><div class="slbl">Aktif Üye</div></div></div><div class="scard"><div class="sicon" style="background:#FEF9E7">📢</div><div><div class="sval">${announcements.length}</div><div class="slbl">Duyuru</div></div></div>${isAdmin?`<div class="scard"><div class="sicon" style="background:#F4ECF7">⏳</div><div><div class="sval">${pending}</div><div class="slbl">Bekleyen Onay</div></div></div>`:`<div class="scard"><div class="sicon" style="background:#EAF5FB">📅</div><div><div class="sval">2</div><div class="slbl">Katılımım</div></div></div>`}</div><div class="g2 mb"><div class="card"><div class="card-title">Yaklaşan Etkinlikler <span class="see-all" onclick="setPage('events')">Tümü →</span></div>${events.slice(0,3).map(e=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="openEventDetail(${e.id})"><div style="width:40px;height:40px;border-radius:10px;background:#F5EFE6;display:flex;align-items:center;justify-content:center;font-size:20px">${e.emoji}</div><div style="flex:1"><div style="font-weight:700;font-size:13.5px">${e.name}</div><div style="font-size:11.5px;color:var(--muted)">${e.date} · ${e.time}</div></div>${e.rsvp?`<span class="pill p-g">RSVP</span>`:''}</div>`).join('')}</div><div class="card"><div class="card-title">Son Duyurular <span class="see-all" onclick="setPage('announcements')">Tümü →</span></div>${announcements.map(a=>`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)"><div style="width:34px;height:34px;border-radius:9px;background:${a.bg};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${a.icon}</div><div><div style="font-weight:700;font-size:13px">${a.title}</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">${a.date}</div></div></div>`).join('')}</div></div><div class="card"><div class="card-title">Güncel Yönetim Kurulları <span class="see-all" onclick="setPage('board')">Tümü →</span></div><div class="g2">${['fosil','caylak'].map(t=>`<div><div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">${t==='fosil'?'🦅 Fosil':'🌱 Çaylak'} · 2024-2025</div>${boards[t].data['2024-2025'].slice(0,3).map(m=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div class="mav" style="width:32px;height:32px;font-size:11px;background:${m.c}">${m.i}</div><div><div style="font-weight:700;font-size:13px">${m.n}</div><div style="font-size:11px;color:var(--muted)">${m.r}</div></div></div>`).join('')}</div>`).join('')}</div></div>`;}
+
+/* EVENTS */
+function renderEvents(){topActs(isAdmin?`<button class="btn btn-p" onclick="openCreateEvent()">＋ Etkinlik Oluştur</button>`:'');document.getElementById('mainContent').innerHTML=`<div class="g3">${events.map(e=>`<div class="ecard" onclick="openEventDetail(${e.id})"><div class="ehead" style="background:linear-gradient(135deg,${e.colors[0]}22,${e.colors[1]||e.colors[0]}33)"><span style="font-size:44px">${e.emoji}</span><span class="etag">${e.type}</span>${e.rsvp?`<span class="ersvp ersvp-o">RSVP Açık</span>`:`<span class="ersvp ersvp-c">Serbest</span>`}</div><div class="ebody"><div class="ename">${e.name}</div><div class="emeta">📅 ${e.date} · ⏰ ${e.time}</div><div class="emeta" style="margin-top:3px">📍 ${e.loc}</div></div><div class="efooter"><div class="pips">${e.pips.map((p,i)=>`<div class="pip" style="background:${e.colors[i%e.colors.length]}">${p}</div>`).join('')}</div>${e.rsvp?`<button class="btn btn-sm btn-g ${e.going?'on':''}" onclick="event.stopPropagation();rsvpT(${e.id})">${e.going?'✓ Katılıyorum':'Katıl'}</button>`:''}</div></div>`).join('')}${isAdmin?`<div class="ecard" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;border:2px dashed var(--border)" onclick="openCreateEvent()"><span style="font-size:36px;color:var(--muted)">＋</span><span style="font-weight:700;color:var(--muted);margin-top:8px">Yeni Etkinlik</span></div>`:''}</div>`;}
+function rsvpT(id){const e=events.find(x=>x.id===id);if(e){e.going=!e.going;if(currentPage==='events')renderEvents();showToast(e.going?'Katılımınız kaydedildi ✓':'Katılım iptal edildi');}}
+
+/* BOARD */
+let bTab='fosil',bYear='2024-2025';
+function renderBoard(){topActs('');document.getElementById('mainContent').innerHTML=`<div class="card mb"><div class="btabs"><div class="btab ${bTab==='fosil'?'active':''}" onclick="bTab='fosil';bYear=boards.fosil.years[0];renderBoard()">🦅 Fosil Kurulu</div><div class="btab ${bTab==='caylak'?'active':''}" onclick="bTab='caylak';bYear=boards.caylak.years[0];renderBoard()">🌱 Çaylak Kurulu</div></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700">${bTab==='fosil'?'🦅 Fosil':'🌱 Çaylak'} Kurulu</div><select class="ysel" onchange="bYear=this.value;rBL()">${boards[bTab].years.map(y=>`<option ${y===bYear?'selected':''}>${y}</option>`).join('')}</select>${bYear===boards[bTab].years[0]?`<span class="pill p-g">Güncel</span>`:`<span class="pill p-b">Arşiv</span>`}</div><div id="bList"></div></div><div class="card"><div class="card-title">Tarihsel Arşiv</div><p style="font-size:13px;color:var(--muted);line-height:1.6">Tüm yılların yönetim kurulu kayıtları yukarıdaki yıl seçimi ile görüntülenebilir.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">${boards[bTab].years.map(y=>`<span onclick="bYear='${y}';rBL()" style="background:${y===bYear?'var(--dark)':'var(--tag-bg)'};color:${y===bYear?'white':'var(--muted)'};border:1px solid var(--border);border-radius:8px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer">${y}</span>`).join('')}</div></div>`;rBL();}
+function rBL(){const bd=boards[bTab].data[bYear]||[];document.getElementById('bList').innerHTML=bd.length?bd.map(m=>`<div class="bmem"><div class="mav" style="width:42px;height:42px;background:${m.c}">${m.i}</div><div style="flex:1"><div style="font-weight:700;font-size:14px">${m.n}</div><div style="font-size:12px;color:var(--muted)">${m.r}</div></div>${bYear===boards[bTab].years[0]?`<span class="pill p-g">Aktif</span>`:''}</div>`).join(''):`<div style="text-align:center;padding:30px;color:var(--muted)">📋 Bu yıl için kayıt yok</div>`;}
+
+/* MEMBERS */
+function renderMembers(){topActs(isAdmin?`<button class="btn btn-p" onclick="openInvite()">✉ Davet Et</button>`:`<button class="btn btn-s" onclick="openInvite()">👤 Kullanıcı Öner</button>`);const pending=memberList.filter(m=>m.status==='pending'),active=memberList.filter(m=>m.status==='active');document.getElementById('mainContent').innerHTML=`${isAdmin&&pending.length?`<div class="card mb" style="border-left:4px solid var(--orange)"><div class="card-title">⏳ Onay Bekleyenler (${pending.length})</div><table class="tbl"><thead><tr><th>Üye</th><th>E-posta</th><th>Tür</th><th>İşlem</th></tr></thead><tbody>${pending.map(m=>`<tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="width:32px;height:32px;font-size:12px;background:${m.col}">${m.init}</div><span style="font-weight:600">${m.name}</span></div></td><td style="color:var(--muted);font-size:12.5px">${m.email}</td><td><span class="tag ${m.type==='Fosil'?'t-r':'t-g'}">${m.type}</span></td><td><button class="abtn ok" onclick="approveMember(${m.id})">✓ Onayla</button></td></tr>`).join('')}</tbody></table></div>`:''}<div class="card"><div class="card-title">Aktif Üyeler (${active.length})</div><table class="tbl"><thead><tr><th>Üye</th><th>Şehir</th><th>Oyunlar</th><th>Enstrümanlar</th><th>Haftalık</th><th>Tür</th></tr></thead><tbody>${active.map(m=>`<tr><td><div style="display:flex;align-items:center;gap:10px"><div class="av" style="width:34px;height:34px;font-size:12px;background:${m.col}">${m.init}</div><div><div style="font-weight:700">${m.name}</div><div style="font-size:11px;color:var(--muted)">${m.year}</div></div></div></td><td style="font-size:12.5px;color:var(--muted)">${m.city||'—'}</td><td style="font-size:11.5px">${m.oyunlar.slice(0,2).map(o=>`<span class="tag t-o" style="margin:1px">${o}</span>`).join('')}${m.oyunlar.length>2?`+${m.oyunlar.length-2}`:''}</td><td style="font-size:11.5px">${m.enstru.slice(0,2).map(e=>`<span class="tag t-b" style="margin:1px">${e}</span>`).join('')}${m.enstru.length>2?`+${m.enstru.length-2}`:''}</td><td><span class="pill ${m.weekly?'p-g':'p-y'}">${m.weekly?'Aktif':'Pasif'}</span></td><td><span class="tag ${m.type==='Fosil'?'t-r':'t-g'}">${m.type}</span></td></tr>`).join('')}</tbody></table></div>`;}
+function approveMember(id){const m=memberList.find(x=>x.id===id);if(m){m.status='active';renderMembers();showToast(`${m.name} onaylandı ✓`);}}
+
+/* MEDIA */
+function renderMedia(){topActs(isAdmin?`<button class="btn btn-p" onclick="showToast('Dosya yükleme açılıyor...')">⬆ Yükle</button>`:'');const items=[{e:'🎵',l:'Bahar Konseri 2025'},{e:'📄',l:'Tüzük 2024'},{e:'🎬',l:'Gösteri Kaydı'},{e:'📸',l:'İftar 2025'},{e:'📑',l:'Etkinlik Programı'},{e:'🎭',l:'Tiyatro Afişi'},{e:'📷',l:'Kahvaltı Anları'},{e:'📋',l:'Yönetmelik'}];document.getElementById('mainContent').innerHTML=`<div class="g2"><div><div style="display:flex;gap:8px;margin-bottom:14px">${['Tümü','📸 Fotoğraf','🎬 Video','📄 Belge'].map((t,i)=>`<button onclick="this.closest('div').querySelectorAll('button').forEach(b=>{b.style.background='var(--cream)';b.style.color='var(--text)'});this.style.background='var(--dark)';this.style.color='white'" style="border:1.5px solid var(--border);background:${i===0?'var(--dark)':'var(--cream)'};color:${i===0?'white':'var(--text)'};padding:6px 12px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Nunito',sans-serif">${t}</button>`).join('')}</div><div class="mgrid">${items.map(it=>`<div class="mitem">${it.e}<div class="mlbl">${it.l}</div></div>`).join('')}</div></div><div>${isAdmin?`<div class="upload-area" onclick="showToast('Dosya seçici açılıyor...')"><div style="font-size:36px;margin-bottom:10px">☁️</div><div style="font-weight:700;margin-bottom:4px">Dosya Yükle</div><p style="font-size:13px;color:var(--muted)">Fotoğraf, Video veya Belge sürükleyin</p><p style="font-size:11px;color:var(--muted);margin-top:6px">PNG, JPG, MP4, PDF, DOCX desteklenir</p></div>`:''}<div class="card" style="margin-top:${isAdmin?'16px':'0'}"><div class="card-title">Son Eklenenler</div>${items.slice(0,4).map(it=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:20px">${it.e}</span><div style="flex:1;font-size:13px;font-weight:600">${it.l}</div><button class="abtn">⬇</button></div>`).join('')}</div></div></div>`;}
+
+/* ANN */
+function renderAnn(){topActs(isAdmin?`<button class="btn btn-p" onclick="openAnnModal()">＋ Duyuru Ekle</button>`:'');document.getElementById('mainContent').innerHTML=`<div class="card"><div class="card-title">Duyurular</div>${announcements.map(a=>`<div class="aitem"><div class="aicon" style="background:${a.bg}">${a.icon}</div><div><div style="font-weight:700;font-size:14px;margin-bottom:3px">${a.title}</div><div style="font-size:12.5px;color:var(--muted);line-height:1.5">${a.text}</div><div style="font-size:11px;color:var(--muted);margin-top:4px">${a.date}</div>${a.wa?`<button class="wa-btn" onclick="showToast('WhatsApp\\'a gönderildi!')">📲 WhatsApp'ta Paylaş</button>`:''}</div></div>`).join('')}</div>`;}
+
+/* ══════════════════════════════════
+   PROFILE — RICH SECTIONED FORM
+══════════════════════════════════ */
+function renderProfile(){
+  topActs('');
+  const p=UP;
+  const preview=`
+  <div class="prof-card">
+    <div class="prof-head">
+      <div class="prof-av">AY</div>
+      <div class="prof-name">${p.name}</div>
+      <div class="prof-email">${p.email}</div>
+      <div style="margin-top:8px;display:flex;gap:4px;justify-content:center;flex-wrap:wrap">
+        <span class="pill p-r">Yönetici</span>
+        <span class="pill ${p.memberType==='Fosil'?'p-r':'p-g'}">${p.memberType}</span>
+        <span class="pill ${p.weeklyActive?'p-g':'p-y'}">${p.weeklyActive?'Haftalık Aktif':'Haftalık Pasif'}</span>
+      </div>
+    </div>
+    <div class="prof-body">
+      <div class="prof-row"><span class="lk">📍 Konum</span><span class="lv">${p.city}, ${p.country}</span></div>
+      <div class="prof-row"><span class="lk">🗓 THBT Girişi</span><span class="lv">${fmtMonth(p.thbtEntry)}</span></div>
+      <div class="prof-row"><span class="lk">🎓 ODTÜ Mezun</span><span class="lv">${fmtMonth(p.odtuGrad)}</span></div>
+      <div class="prof-tagblock">
+        <div class="ptlbl">💃 Halk Oyunları</div>
+        <div class="prof-tags">${p.halkOyunlari.length?p.halkOyunlari.map(o=>`<span class="tag t-o">${o}</span>`).join(''):'<span style="font-size:12px;color:var(--muted)">Belirtilmemiş</span>'}</div>
+      </div>
+      <div class="prof-tagblock" style="margin-top:12px">
+        <div class="ptlbl">🎵 Müzikal</div>
+        <div class="prof-tags">${p.muzikalAktiviteler.length?p.muzikalAktiviteler.map(m=>`<span class="tag t-g">${m}</span>`).join(''):'<span style="font-size:12px;color:var(--muted)">Belirtilmemiş</span>'}</div>
+      </div>
+      <div class="prof-tagblock" style="margin-top:12px">
+        <div class="ptlbl">🪗 Enstrümanlar</div>
+        <div class="prof-tags">${p.enstru.length?p.enstru.map(e=>`<span class="tag t-b">${e}</span>`).join(''):'<span style="font-size:12px;color:var(--muted)">Belirtilmemiş</span>'}</div>
+      </div>
+      <div class="prof-tagblock" style="margin-top:12px">
+        <div class="ptlbl">🗂 Aktif Birimler</div>
+        <div class="prof-tags">${p.aktifBirimler.length?p.aktifBirimler.map(b=>`<span class="tag t-r">${b}</span>`).join(''):'<span style="font-size:12px;color:var(--muted)">Belirtilmemiş</span>'}</div>
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('mainContent').innerHTML=`
+  <div class="prof-layout">
+    ${preview}
+    <div>
+      <div class="pf-sections">
+        ${sec('kisisel','👤','Kişisel Bilgiler',kisiselForm(),true)}
+        ${sec('thbt','🏛','THBT Bilgileri',thbtForm(),true)}
+        ${sec('oyunlar','💃','Bildiği Halk Oyunları',tagSec(HALK,'halkOyunlari','oc'),true)}
+        ${sec('muzik','🎵','Müzikal Aktiviteler',muzikForm(),true)}
+        ${sec('enstru','🪗','Çaldığı Enstrümanlar',tagSec(ENSTR,'enstru','bc'),true)}
+        ${sec('birim','🗂','Aktif Rol Aldığı Birimler',birimForm(),true)}
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-p" style="border-radius:12px;padding:12px 32px;font-size:14px;border-radius:12px" onclick="saveProfile()">💾 Profili Kaydet</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function fmtMonth(val){if(!val)return '—';const[y,m]=val.split('-');const months=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];return `${months[parseInt(m)-1]} ${y}`;}
+
+function sec(id,icon,title,body,open){
+  return `<div class="pf-section"><div class="pf-hdr" onclick="toggleSec('${id}')"><span class="pf-hdr-icon">${icon}</span><span class="pf-hdr-title">${title}</span><span class="pf-chev" id="chev_${id}">${open?'▲':'▼'}</span></div><div class="pf-body ${open?'':'closed'}" id="pb_${id}">${body}</div></div>`;
+}
+function toggleSec(id){const b=document.getElementById('pb_'+id),c=document.getElementById('chev_'+id);const closed=b.classList.toggle('closed');c.textContent=closed?'▼':'▲';}
+
+function kisiselForm(){const p=UP;return `<div class="fr"><div class="fg"><label class="fl">Ad Soyad</label><input class="fi" id="pf_name" value="${p.name}"></div><div class="fg"><label class="fl">Telefon</label><input class="fi" id="pf_phone" value="${p.phone}"></div></div><div class="fr"><div class="fg"><label class="fl">Yaşadığı İl / Şehir</label><input class="fi" id="pf_city" value="${p.city}"></div><div class="fg"><label class="fl">Ülke</label><input class="fi" id="pf_country" value="${p.country}"></div></div>`;}
+
+function thbtForm(){const p=UP;return `<div class="fr"><div class="fg"><label class="fl">THBT'ye Giriş Tarihi</label><input class="fi" id="pf_entry" type="month" value="${p.thbtEntry}"></div><div class="fg"><label class="fl">ODTÜ Mezuniyet Tarihi</label><input class="fi" id="pf_grad" type="month" value="${p.odtuGrad}"></div></div><div class="fr"><div class="fg"><label class="fl">Üye Türü</label><select class="fs" id="pf_type"><option ${p.memberType==='Fosil'?'selected':''}>Fosil</option><option ${p.memberType==='Çaylak'?'selected':''}>Çaylak</option></select></div><div class="fg"><label class="fl">Haftalık Çalışmalar</label><div class="toggle-row" style="padding:8px 0"><div class="toggle-left"><div class="tlbl" id="wlbl">${p.weeklyActive?'Aktif Katılımcı':'Katılmıyor'}</div><div class="tsub" id="wsub">${p.weeklyActive?'Düzenli katılıyorum':'Şu an katılamıyorum'}</div></div><label class="tswitch"><input type="checkbox" id="pf_weekly" ${p.weeklyActive?'checked':''} onchange="updWeekly()"><span class="tslider"></span></label></div></div></div>`;}
+function updWeekly(){const on=document.getElementById('pf_weekly').checked;document.getElementById('wlbl').textContent=on?'Aktif Katılımcı':'Katılmıyor';document.getElementById('wsub').textContent=on?'Düzenli katılıyorum':'Şu an katılamıyorum';}
+
+function tagSec(pool,key,colorCls){
+  const sel=key==='halkOyunlari'?UP.halkOyunlari:key==='enstru'?UP.enstru:UP.aktifBirimler;
+  return `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Tıklayarak seçin / kaldırın</div>
+  <div class="tag-pool" id="tp_${key}">${pool.map(item=>`<button class="topt ${colorCls} ${sel.includes(item)?'sel':''}" onclick="togTag(this,'${key}')">${item}</button>`).join('')}</div>
+  <div style="margin-top:8px;font-size:12px;color:var(--muted)" id="tc_${key}">${sel.length} seçili</div>`;}
+function togTag(el,key){el.classList.toggle('sel');document.getElementById('tc_'+key).textContent=document.querySelectorAll('#tp_'+key+' .sel').length+' seçili';}
+
+function muzikForm(){const p=UP;return `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Birden fazla seçebilirsiniz</div><div class="cbgrid">${MUZIK.map(m=>`<div class="cbcard ${p.muzikalAktiviteler.includes(m)?'on':''}" onclick="togCb(this)"><div class="cbdot"></div><label>${m}</label></div>`).join('')}</div>`;}
+function birimForm(){const p=UP;return `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Aktif rol aldığınız birimleri işaretleyin</div><div class="cbgrid">${BIRIM.map(b=>`<div class="cbcard ${p.aktifBirimler.includes(b)?'on':''}" onclick="togCb(this)"><div class="cbdot"></div><label>${b}</label></div>`).join('')}</div>`;}
+function togCb(el){el.classList.toggle('on');}
+
+function saveProfile(){
+  Object.assign(UP,{
+    name:document.getElementById('pf_name')?.value||UP.name,
+    phone:document.getElementById('pf_phone')?.value||UP.phone,
+    city:document.getElementById('pf_city')?.value||UP.city,
+    country:document.getElementById('pf_country')?.value||UP.country,
+    thbtEntry:document.getElementById('pf_entry')?.value||UP.thbtEntry,
+    odtuGrad:document.getElementById('pf_grad')?.value||UP.odtuGrad,
+    memberType:document.getElementById('pf_type')?.value||UP.memberType,
+    weeklyActive:document.getElementById('pf_weekly')?.checked??UP.weeklyActive,
+    halkOyunlari:[...document.querySelectorAll('#tp_halkOyunlari .sel')].map(e=>e.textContent),
+    enstru:[...document.querySelectorAll('#tp_enstru .sel')].map(e=>e.textContent),
+    muzikalAktiviteler:[...document.querySelectorAll('#pb_muzik .cbcard.on label')].map(e=>e.textContent),
+    aktifBirimler:[...document.querySelectorAll('#pb_birim .cbcard.on label')].map(e=>e.textContent),
+  });
+  renderProfile();showToast('Profil başarıyla güncellendi ✓');
+}
+
+/* MODALS */
+function openEventDetail(id){
+  const e=events.find(x=>x.id===id);if(!e)return;
+  const att=memberList.filter(m=>m.status==='active').slice(0,4);
+  document.getElementById('mcontent').innerHTML=`<div style="text-align:center;padding:16px 0 20px;border-bottom:1px solid var(--border);margin-bottom:20px"><div style="font-size:52px;margin-bottom:8px">${e.emoji}</div><div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700">${e.name}</div><span class="tag t-r" style="margin-top:8px;display:inline-block">${e.type}</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">${[['📅 Tarih',e.date],['⏰ Saat',e.time],['📍 Yer',e.loc],['🎟 RSVP',e.rsvp?'Açık':'Serbest']].map(([k,v])=>`<div style="background:var(--cream);border-radius:10px;padding:12px"><div style="font-size:11px;color:var(--muted);margin-bottom:3px">${k}</div><div style="font-weight:700;font-size:13.5px">${v}</div></div>`).join('')}</div>${e.rsvp?`<div style="margin-bottom:20px"><div style="font-weight:700;font-size:14px;margin-bottom:10px">Katılımcılar (${att.length})</div>${att.map(m=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><div class="av" style="width:32px;height:32px;font-size:12px;background:${m.col}">${m.init}</div><div style="flex:1"><div style="font-size:13.5px;font-weight:600">${m.name}</div><div style="font-size:11px;color:var(--muted)">${m.oyunlar.slice(0,2).join(', ')||'Oyun bilgisi yok'}</div></div><span class="pill p-g">Katılıyor</span></div>`).join('')}</div><div style="display:flex;gap:10px"><button class="sbtn" style="flex:1" onclick="rsvpT(${e.id});closeModal()">${e.going?'Katılımı İptal Et':'✓ Katılacağım'}</button>${isAdmin?`<button class="wa-btn" style="font-size:13px;padding:12px 16px;white-space:nowrap" onclick="showToast('WhatsApp mesajı hazırlandı!')">📲 WhatsApp</button>`:''}</div>`:`<p style="color:var(--muted);text-align:center;font-size:13px;padding:20px">Bu etkinlik için RSVP gerekmez.</p>`}${isAdmin?`<div style="border-top:1px solid var(--border);margin-top:18px;padding-top:14px"><div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:10px">YÖNETİCİ İŞLEMLERİ</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="abtn" onclick="showToast('Davet gönderildi!')">✉ Tüm Üyelere Davet</button><button class="abtn" onclick="showToast('Duyuru yapıldı!')">📢 Duyuru Yap</button><button class="abtn" onclick="showToast('Liste indirildi!')">⬇ Liste İndir</button></div></div>`:''}`;
+  showModal();
+}
+function openCreateEvent(){if(!isAdmin)return;document.getElementById('mcontent').innerHTML=`<div class="mtitle">Yeni Etkinlik Oluştur</div><div class="fg"><label class="fl">Etkinlik Adı</label><input class="fi" placeholder="Etkinlik adını girin"></div><div class="fr"><div class="fg"><label class="fl">Tür</label><select class="fs"><option>Konser</option><option>Gösteri</option><option>Tiyatro</option><option>Yemek</option><option>Kahvaltı</option><option>Diğer</option></select></div><div class="fg"><label class="fl">Tarih</label><input class="fi" type="date"></div></div><div class="fr"><div class="fg"><label class="fl">Saat</label><input class="fi" type="time" value="19:00"></div><div class="fg"><label class="fl">Yer</label><input class="fi" placeholder="Etkinlik yeri"></div></div><div class="fg"><label class="fl">Açıklama</label><textarea class="ft" placeholder="Etkinlik hakkında bilgi..."></textarea></div><div class="fc"><input type="checkbox" checked><label>RSVP gerekli (katılım takibi)</label></div><div class="fc"><input type="checkbox"><label>Tüm üyelere otomatik davet gönder</label></div><button class="sbtn" onclick="showToast('Etkinlik oluşturuldu ✓');closeModal()">Etkinlik Oluştur</button>`;showModal();}
+function openInvite(){document.getElementById('mcontent').innerHTML=`<div class="mtitle">${isAdmin?'Üye Davet Et':'Kullanıcı Öner'}</div><div class="fg"><label class="fl">Ad Soyad</label><input class="fi" placeholder="Kişinin adı"></div><div class="fg"><label class="fl">E-posta</label><input class="fi" type="email" placeholder="ornek@metu.edu.tr"></div>${isAdmin?`<div class="fg"><label class="fl">Üye Türü</label><select class="fs"><option>Fosil</option><option>Çaylak</option></select></div>`:`<div class="fg"><label class="fl">Referans Notu</label><textarea class="ft" placeholder="Bu kişiyi neden öneriyorsunuz?"></textarea></div>`}<button class="sbtn" onclick="showToast('${isAdmin?'Davet gönderildi ✓':'Öneri iletildi ✓'}');closeModal()">${isAdmin?'Davet Gönder':'Öneriyi Gönder'}</button>`;showModal();}
+function openAnnModal(){document.getElementById('mcontent').innerHTML=`<div class="mtitle">Yeni Duyuru</div><div class="fg"><label class="fl">Başlık</label><input class="fi" placeholder="Duyuru başlığı"></div><div class="fg"><label class="fl">İçerik</label><textarea class="ft" placeholder="Duyuru metni..."></textarea></div><div class="fc"><input type="checkbox"><label>WhatsApp'ta da paylaş</label></div><button class="sbtn" style="margin-top:14px" onclick="showToast('Duyuru yayınlandı ✓');closeModal()">Duyuruyu Yayınla</button>`;showModal();}
+function showModal(){document.getElementById('moverlay').style.display='flex';}
+function closeModal(){document.getElementById('moverlay').style.display='none';}
+function maybeClose(e){if(e.target===document.getElementById('moverlay'))closeModal();}
+let tt;function showToast(msg){document.querySelectorAll('.toast').forEach(t=>t.remove());const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);clearTimeout(tt);tt=setTimeout(()=>t.remove(),2800);}
+
+setPage('dashboard');
+</script>
+</body>
+</html>
